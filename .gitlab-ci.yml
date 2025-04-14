@@ -40,20 +40,7 @@ release:
   stage: release
   before_script:
   - apk update && apk add --no-cache npm && rm -rf /var/cache/apk/*
-  - npm install -g semantic-release@24 @semantic-release/git @semantic-release/exec
-  - |
-    cat <<EOF > .releaserc.yml
-    branches:
-      - main
-      - name: dev
-        prerelease: true
-    plugins:
-      - "@semantic-release/release-notes-generator"
-      - "@semantic-release/commit-analyzer"
-      - "@semantic-release/git"
-      - - "@semantic-release/exec"
-        - verifyReleaseCmd: echo v\${nextRelease.version} > nextVersion
-    EOF
+  - npm install -g semantic-release@24 @semantic-release/git @semantic-release/exec @semantic-release/gitlab
   script:
   - semantic-release
   - test -f nextVersion && echo "SRTAG=$(cat nextVersion)" >> release.env || echo
