@@ -35,4 +35,4 @@ RUN curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v${
     -o /usr/local/bin/terragrunt && \
     chmod +x /usr/local/bin/terragrunt
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash", "-l", "-c"]
