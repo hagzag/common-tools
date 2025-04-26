@@ -58,24 +58,30 @@ jobs:
     - name: setup and execute semantic-release
       id: semantic_release_prep
       run: |
-        cat <<EOF>> .releaserc.yml
-        branches:
-        - main
-        - name: dev
-          prerelease: true
-        plugins:
-        - "@semantic-release/commit-analyzer"
-        - "@semantic-release/release-notes-generator"
-        - "@semantic-release/github"
-        - - "@semantic-release/exec"
-          - verifyReleaseCmd: echo \${nextRelease.version} > nextVersion
-        EOF
+        # Check if .releaserc.yml or .releaserc.json exists
+        if [ ! -f .releaserc.yml ] && [ ! -f .releaserc.json ]; then
+          echo "No release config found, creating .releaserc.yml"
+          cat <<EOF>> .releaserc.yml
+          branches:
+          - main
+          - name: dev
+            prerelease: true
+          plugins:
+          - "@semantic-release/commit-analyzer"
+          - "@semantic-release/release-notes-generator"
+          - "@semantic-release/github"
+          - - "@semantic-release/exec"
+            - verifyReleaseCmd: echo \${nextRelease.version} > nextVersion
+          EOF
+        else
+          echo "Existing release config found (.releaserc.yml or .releaserc.json), skipping creation"
+        fi
+    
+        # Proceed with semantic-release
         semantic-release --dry-run -r ${{ github.server_url }}/${{ github.repository }}.git
         test -f nextVersion && echo "SRTAG=v$(cat nextVersion)" >> ${GITHUB_OUTPUT} || echo "SRTAG=${{ steps.vars.outputs.short_sha }}" >> ${GITHUB_OUTPUT}
-        # echo $SRTAG
-        # cat nextVersion
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
@@ -136,6 +142,6 @@ jobs:
       run: |
         semantic-release -r ${{ github.server_url }}/${{ github.repository }}.git
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: steps.build_n_push.outputs.exit_code == 0
 
