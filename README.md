@@ -1,112 +1,58 @@
-Tools Docker Image
+# Common Tools Docker Image
 
-Introduction
-This image is a containerization of common sools used during build such as semantic-release, helm, kubectl, kubectx & kubens - this can also be used by the developer team to mount and execute any command contained in the container.
+## Overview
 
-Tools included
+This Docker image provides a curated set of tools commonly used in infrastructure management, automation, and development workflows. It is designed to simplify CI/CD processes by pre-packaging essential utilities such as `Terraform`, `Terragrunt`, `OpenTofu`, and more.
 
+## Tools Included
 
-semantic-release -  Inspects commits messages and automatically creates/pushes tags in SemVer format back to the repo.
+### Pre-installed Tools
+- **Bash**: A widely-used shell for scripting and command-line tasks.
+- **curl**: A command-line tool for transferring data with URLs.
+- **unzip**: A utility to extract `.zip` files.
+- **git**: A version control system for managing source code repositories.
+- **jq**: A lightweight and flexible command-line JSON processor.
+- **Python 3**: A versatile programming language for automation and scripting.
+- **pip (py3-pip)**: The Python package installer for managing Python libraries.
+- **AWS CLI**: A command-line tool to manage AWS services.
 
+### Infrastructure Tools
+- **Terraform**:
+  - HashiCorp's infrastructure-as-code tool for building and managing infrastructure resources.
+  - Installed version: `1.11.4` (default, configurable via `TERRAFORM_VERSION`).
+- **Terragrunt**:
+  - A wrapper for Terraform that simplifies configurations and enables DRY (Don't Repeat Yourself) principles.
+  - Installed version: `0.77.20` (default, configurable via `TERRAGRUNT_VERSION`).
+- **OpenTofu**:
+  - A community-driven fork of Terraform for managing infrastructure with similar functionality.
+  - Installed version: `1.9.0` (default, configurable via `TOFU_VERSION`).
 
-sematic-rlease plugins - a set of plugins used to release e.g
+## Environment Variables
 
- @semantic-release/gitlab 
- @semantic-release/release-notes-generator 
- @semantic-release/docker @semantic-release/helm
+The following environment variables can be set to customize tool versions at build time:
+- `TERRAFORM_VERSION`: Specifies the version of Terraform to install (default: `1.11.4`).
+- `TERRAGRUNT_VERSION`: Specifies the version of Terragrunt to install (default: `0.77.20`).
+- `TOFU_VERSION`: Specifies the version of OpenTofu to install (default: `1.9.0`).
 
+## Usage
 
+### Pull the Image
+You can pull the pre-built Docker image from your container registry:
+```bash
+docker pull ghcr.io/hagzag/common-tools:latest
+```
 
+### Use in github-actions - needs validation
 
-yq - yml query & editing comman line tool
+```yaml
 
+```
 
-jq - json query & editing comman line tool
+### Use in gitlab-ci
 
-
-...
-
-
-
-semantic releae overview
-
-
-Developer commits code with commit messages following Angular's conventional commits spec.
-
-
-Tool inspects commit messages as code gets merged and does the following:
-
-Generates a git tag following the Semver spec, while inferring from the commit message.
-Pushes generated tag back to repo.
-Generates Gitlab release notes
-
-
-
-
-
-
-Commit message
-Release type
-
-
-
-
-fix(pencil): stop graphite breaking when too much pressure applied
-Patch Release
-
-
-feat(pencil): add 'graphiteWidth' option
-
-Minor Feature Release
-
-
-
-perf(pencil): remove graphiteWidth optionBREAKING CHANGE: The graphiteWidth option has been removed.The default graphite width of 10mm is always used for performance reasons.
-
-
-Major Breaking Release
-
-
-
-
-Included plugins (additional):
-
-@semantic-release/gitlab: Connector to gitlab
-@semantic-release/release-notes-generator: Generates release notes
-
-
-How to use
-
-Ensure you have .releasesrc.json in the root of your project. 
-See here for more details on configuration Semantic Release Configuration 
-The basic configuration below watches for merges to "master" branch
-
-
-{
-  "branches": [ "master" ],
-  "plugins": [
-    ["@semantic-release/gitlab", {
-      "gitlabUrl": "https://gitlab.com"
-    }],
-    ["@semantic-release/release-notes-generator", {}]
-  ]
-}
-
-
-
-Configure your gitlab ci pipeline to use Semantic Release 
-Example .gitlab-ci.yml
-
-
-stages:
-  - release
-
-release:
-  - image: registry.gitlab.com/iclchan/semantic-release-docker:latest
-  - script:
-      - semantic-release
-
-
-
-Set environment variable GL_TOKEN to be the access token with push permissions to your repo.
-
+```yaml
+example-job:
+  image: ghcr.io/hagzag/common-tools:latest
+  script:
+    - echo "Using ghcr.io/hagzag/common-tools Docker image in GitLab CI"
+```
