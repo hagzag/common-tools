@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     py3-pip \
     aws-cli
 
-# Install Terraform for the appropriate architecture
+# Install Terraform
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     mv terraform /usr/local/bin/ && \
@@ -26,12 +26,11 @@ RUN curl -sSL "https://github.com/gruntwork-io/terragrunt/releases/download/v${T
     -o /usr/local/bin/terragrunt && \
     chmod +x /usr/local/bin/terragrunt
 
-RUN wget -q https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_${TARGETARCH}.zip \
-    unzip -q tofu_${TOFU_VERSION}_${TARGETARCH}.zip && \
-    chmod +x tofu \
+# Install OpenTofu (fixed section)
+RUN wget -q https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_${TARGETARCH}.zip && \
+    unzip -q tofu_${TOFU_VERSION}_linux_${TARGETARCH}.zip && \
+    chmod +x tofu && \
     mv tofu /usr/local/bin/ && \
-    rm tofu_${TOFU_VERSION}_${TARGETARCH}.zip && \
-
-RUN terraform --version && terragrunt --version
+    rm tofu_${TOFU_VERSION}_linux_${TARGETARCH}.zip
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
