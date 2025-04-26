@@ -26,7 +26,6 @@ RUN curl -sSL "https://github.com/gruntwork-io/terragrunt/releases/download/v${T
     -o /usr/local/bin/terragrunt && \
     chmod +x /usr/local/bin/terragrunt
 
-RUN    TOFU_VERSION=${{ inputs.opentofu-version }}
 RUN wget -q https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_${TARGETARCH}.zip \
     unzip -q tofu_${TOFU_VERSION}_linux_amd64.zip && \
     chmod +x tofu
